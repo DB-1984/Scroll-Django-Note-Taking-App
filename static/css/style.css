@@ -1,0 +1,17 @@
+body {
+    font-family: Inter, sans-serif;
+}
+
+.retro-grid {
+    background-image: linear-gradient(rgba(36, 36, 42, .035) 1px, transparent 1px), linear-gradient(90deg, rgba(36, 36, 42, .035) 1px, transparent 1px);
+    background-size: 28px 28px;
+}
+
+.retro-mono {
+    font-family: "JetBrains Mono", monospace;
+}
+
+.palette-strip {
+    height: 5px;
+    background: linear-gradient(90deg, #0d536a 0 20%, #48a6a1 20% 40%, #f6c79b 40% 60%, #ed8d16 60% 80%, #b32721 80%);
+}

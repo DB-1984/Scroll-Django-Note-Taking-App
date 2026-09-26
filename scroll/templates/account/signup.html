@@ -1,0 +1,38 @@
+{% extends "scroll/base_entrance.html" %}
+{% load socialaccount %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="space-y-6">
+  <div>
+    <h2 class="text-2xl font-black tracking-tight">Join Scroll</h2>
+    <p class="mt-2 text-sm text-black/65">A place for your notes and ideas.</p>
+  </div>
+  <a href="{% provider_login_url 'google' %}" class="flex w-full items-center justify-center gap-3 rounded border border-black bg-white px-4 py-3 text-sm font-semibold text-black shadow-[3px_3px_0_#000]">
+    <img src="https://www.google.com/favicon.ico" class="size-4" alt="" aria-hidden="true"> Sign up with Google
+  </a>
+  <div class="flex items-center gap-3 text-xs uppercase tracking-widest text-black/55"><span class="h-px flex-1 bg-black/25"></span>or use email<span class="h-px flex-1 bg-black/25"></span></div>
+  <form method="post" action="{% url 'account_signup' %}" class="space-y-5">
+    {% csrf_token %}
+    {% if redirect_field_value %}<input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}">{% endif %}
+    {% if form.non_field_errors %}<div role="alert" class="rounded border border-black bg-[#ffe0d9] p-3 text-sm text-[#a12e22]">{{ form.non_field_errors }}</div>{% endif %}
+    {% for field in form %}
+      {% if field.is_hidden %}{{ field }}{% else %}
+      <div class="space-y-2">
+        {% if field.field.widget.input_type == "checkbox" %}
+          <label for="{{ field.id_for_label }}" class="flex items-center gap-2 text-sm font-semibold">
+            {% render_field field class="size-4 rounded border border-black" %} {{ field.label }}
+          </label>
+        {% else %}
+          <label for="{{ field.id_for_label }}" class="block text-sm font-semibold">{{ field.label }}</label>
+          {% render_field field class="w-full rounded border border-black bg-white px-3 py-3 text-sm text-black placeholder:text-black/45 focus:outline focus:outline-2 focus:outline-offset-2 focus:outline-[#3f3f46]" %}
+        {% endif %}
+        {% for error in field.errors %}<p class="text-xs text-[#a12e22]">{{ error }}</p>{% endfor %}
+        {% if field.help_text %}<div class="text-xs leading-5 text-black/60">{{ field.help_text }}</div>{% endif %}
+      </div>
+      {% endif %}
+    {% endfor %}
+    <button type="submit" class="w-full rounded border border-black bg-black py-3 text-sm font-bold text-white shadow-[3px_3px_0_#3f3f46]">Create account</button>
+  </form>
+  <p class="text-center text-xs text-black/65">Already have an account? <a href="{% url 'account_login' %}" class="font-bold text-black underline underline-offset-4">Sign in</a></p>
+</div>
+{% endblock %}

@@ -1,0 +1,37 @@
+<div class="relative overflow-hidden rounded border p-6 shadow-[4px_4px_0_#000] transition-colors duration-500
+    {% if temp != '--' and temp > 25 %}
+        border-black bg-[#ffe3ba]
+    {% elif 'Rain' in condition or 'Drizzle' in condition or 'Showers' in condition %}
+        border-black bg-[#d8f0eb]
+    {% elif temp != '--' and temp < 8 %}
+        border-black bg-[#dceeff]
+    {% else %}
+        border-black bg-white
+    {% endif %}">
+    <div class="absolute left-0 top-0 h-full w-1
+        {% if temp != '--' and temp > 25 %}bg-[#ed8d16]
+        {% elif 'Rain' in condition or 'Drizzle' in condition or 'Showers' in condition %}bg-[#16717f]
+        {% elif temp != '--' and temp < 8 %}bg-[#258a94]
+        {% else %}bg-[#172f38]{% endif %}" aria-hidden="true"></div>
+
+    <div class="mb-5 flex items-center justify-between gap-3">
+        <p class="text-xs font-semibold uppercase tracking-[0.16em]
+            {% if temp != '--' and temp > 25 %}text-[#8a3b09]
+            {% elif 'Rain' in condition or 'Drizzle' in condition or 'Showers' in condition %}text-[#155a62]
+            {% elif temp != '--' and temp < 8 %}text-[#155a62]
+            {% else %}text-black/60{% endif %}">
+            {% if is_local %}Local weather{% else %}Banbury weather{% endif %}
+        </p>
+        <span aria-hidden="true" class="size-2 rounded-full
+            {% if temp != '--' and temp > 25 %}bg-[#ed8d16]
+            {% elif 'Rain' in condition or 'Drizzle' in condition or 'Showers' in condition %}bg-[#16717f]
+            {% elif temp != '--' and temp < 8 %}bg-[#258a94]
+            {% else %}bg-[#172f38]{% endif %}"></span>
+    </div>
+    <div class="flex items-end justify-between gap-4">
+        <span class="text-4xl font-semibold tracking-tight leading-none text-black">
+            {{ temp }}{% if temp != '--' %}°C{% endif %}
+        </span>
+        <span class="max-w-32 text-right text-sm font-medium text-black/75">{{ condition }}</span>
+    </div>
+</div>

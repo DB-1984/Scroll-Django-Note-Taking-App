@@ -1,0 +1,43 @@
+{% extends "scroll/base.html" %}
+
+{% block content %}
+<section class="mb-8">
+    <div class="mb-7">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-black/60 retro-mono">01 / Your space</p>
+        <h2 class="mt-2 border-l-4 border-[#3f3f46] pl-4 text-4xl font-black uppercase tracking-[-0.05em] text-black">The feed</h2>
+        <p class="mt-2 text-sm text-black/65">A place to collect what is on your mind.</p>
+    </div>
+    {% if user.is_authenticated %}
+    <div class="rounded border border-black bg-white p-5 shadow-[5px_5px_0_#000] transition-colors focus-within:border-black focus-within:ring-[3px] focus-within:ring-[#3f3f46] sm:p-6">
+        <div class="flex gap-4">
+            <div
+                class="w-9 h-9 rounded-full border bg-[#3f3f46] border-black flex-shrink-0 flex items-center justify-center text-xs font-semibold text-white">
+                {{ user.username|slice:":1"|upper }}
+            </div>
+            <form hx-post="{% url 'index' %}" hx-target="#timeline" hx-swap="afterbegin"
+                hx-on::after-request="this.reset()" class="flex-grow">
+                {% csrf_token %}
+
+                <div class="flex-grow min-h-[100px]">
+                    {{ entry_form.body }}
+                </div>
+
+                <div class="flex justify-between items-center gap-3 mt-4 pt-4 border-t border-black/20">
+                    <div class="flex items-center gap-2">
+                        {{ entry_form.label_name }}
+                    </div>
+                    <button type="submit"
+                        class="bg-black text-xs text-white font-bold uppercase tracking-wider px-5 py-2.5 rounded hover:bg-[#3f3f46] transition-colors">
+                        Post
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+</section>
+
+<div id="timeline" class="space-y-3">
+    {% include 'scroll/partials/entry_list_partial.html' %}
+</div>
+{% endblock %}

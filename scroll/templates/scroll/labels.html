@@ -1,0 +1,35 @@
+{% extends "scroll/base.html" %}
+
+{% block content %}
+<div>
+    <div class="mb-8">
+        <p class="text-xs font-medium uppercase tracking-[0.18em] text-black/60 retro-mono">02 / Browse</p>
+        <h2 class="mt-2 border-l-4 border-[#3f3f46] pl-4 text-4xl font-black uppercase tracking-[-0.05em] text-black">Labels</h2>
+        <p class="mt-2 text-sm text-black/65">Find notes by topic.</p>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {% for label in labels %}
+        <a href="{% url 'index' %}?q={{ label.name }}"
+            class="group p-5 bg-white border border-black rounded hover:shadow-[4px_4px_0_#000] transition-colors flex justify-between items-center">
+            <div>
+                <span class="retro-mono text-xs text-black/60 block mb-1 uppercase tracking-wider">Label</span>
+                <span class="text-sm font-bold text-black group-hover:text-[#3f3f46] transition-colors">
+                    {{ label.name }}
+                </span>
+            </div>
+            <div class="text-black/60 group-hover:text-black transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M5 12h14m-7-7 7 7-7 7" />
+                </svg>
+            </div>
+        </a>
+        {% empty %}
+        <div class="bg-white border border-black rounded p-12 text-center sm:col-span-2">
+            <p class="text-sm text-black/60">No labels yet.</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
