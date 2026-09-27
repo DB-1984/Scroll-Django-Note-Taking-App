@@ -1,15 +1,19 @@
-from django.shortcuts import render, get_object_or_404, redirect
-from django.http import HttpResponse
-from django.views.decorators.csrf import ensure_csrf_cookie
-from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.decorators import login_required
-from django.core.mail import send_mail
-from .models import Entry, Label
+import logging
+
 import requests
-from django.shortcuts import render
 from django.contrib.auth import login
-from .forms import EntryForm, SearchForm
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.forms import UserCreationForm
+from django.core.mail import send_mail
 from django.db.models import Q
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect, render
+from django.views.decorators.csrf import ensure_csrf_cookie
+
+from .forms import EntryForm, SearchForm
+from .models import Entry, Label
+
+logger = logging.getLogger(__name__)
 
 @ensure_csrf_cookie # mostly covers partials not automatically sending CSRF
 @login_required # <--- ESSENTIAL: Ensures request.user exists for the POST
@@ -172,20 +176,30 @@ def get_weather(request):
     else:
         # Only attempt the "Real" world if we aren't testing
         try:
-            url = f"https://api.open-meteo.com/v1/forecast?latitude={lat or 52.06}&longitude={lon or -1.33}&current_weather=true"
-            response = requests.get(url, timeout=5)
+            response = requests.get(
+                "https://api.open-meteo.com/v1/forecast",
+                params={
+                    "latitude": lat or 52.06,
+                    "longitude": lon or -1.33,
+                    "current": "temperature_2m,weather_code",
+                },
+                timeout=10,
+            )
             response.raise_for_status()
-            data = response.json()
-            current = data.get('current_weather')
-            
+
+            current = response.json()["current"]
             context = {
-                'temp': round(current.get('temperature')),
-                'condition': _interpret_wmo(current.get('weathercode')),
-                'is_local': is_local
+                "temp": round(current["temperature_2m"]),
+                "condition": _interpret_wmo(current["weather_code"]),
+                "is_local": is_local,
             }
-        except Exception as e:
-            print(f"Weather Error: {e}")
-            context = {'temp': '--', 'condition': 'Station_Offline', 'is_local': False}
+        except Exception:
+            logger.exception("Weather lookup failed")
+            context = {
+                "temp": "--",
+                "condition": "Weather unavailable",
+                "is_local": False,
+            }
 
     # 4. Return the partial
     return render(request, 'scroll/partials/weather.html', context)
