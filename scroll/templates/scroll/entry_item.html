@@ -1,5 +1,5 @@
 <div id="entry-{{ entry.id }}"
-    class="relative flex gap-3 sm:gap-4 p-5 sm:p-6 bg-white border border-black rounded group shadow-[3px_3px_0_#000] transition-all hover:shadow-[5px_5px_0_#000]">
+    class="relative flex gap-3 sm:gap-4 p-2 sm:p-6 bg-white border border-black rounded group shadow-[3px_3px_0_#000] transition-all hover:shadow-[5px_5px_0_#000]">
 
     <div
         class="w-9 h-9 rounded-full bg-[#3f3f46] border border-black flex-shrink-0 flex items-center justify-center text-xs font-bold text-white">
@@ -50,7 +50,7 @@
                 </div>
             </div>
 
-            <div class="flex items-center gap-2 group-hover:opacity-100 transition-opacity">
+            <div class="flex items-center gap-1 group-hover:opacity-100 transition-opacity">
                 <span id="share-status-{{ entry.id }}" class="text-xs tracking-tighter text-[#3f3f46]"></span>
 
                 <form hx-post="{% url 'share_entry' entry.id %}" hx-target="#share-status-{{ entry.id }}"
@@ -58,7 +58,7 @@
                     class="flex items-center gap-2">
                     {% csrf_token %}
                     <input type="email" name="email" placeholder="share@email.com"
-                        class="bg-transparent border-none text-xs text-black outline-none w-24 focus:w-40 transition-all placeholder:text-black/50">
+                        class="bg-transparent border-none text-xs text-black outline-none p-1 w-24 focus:w-40 transition-all placeholder:text-black/50">
                     <button type="submit" class="text-black/55 hover:text-black transition-colors">
                         <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none"
                             stroke="currentColor" stroke-width="2.5">
