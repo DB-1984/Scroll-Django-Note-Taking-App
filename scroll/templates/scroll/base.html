@@ -191,45 +191,177 @@
 
   <script>
     document.body.addEventListener('htmx:afterOnLoad', function (evt) {
-      if (evt.detail.xhr.status === 200 && (evt.detail.target.id === 'entry-stream' || evt.detail.target.id === 'entry-form-container')) {
-        const form = document.getElementById('entry-form');
-        if (form) form.reset();
-      }
+        if (
+            evt.detail.xhr.status === 200 &&
+            (
+                evt.detail.target.id === 'entry-stream' ||
+                evt.detail.target.id === 'entry-form-container'
+            )
+        ) {
+            const form = document.getElementById('entry-form');
+            if (form) form.reset();
+        }
     });
+
     function copyShareLink(url) {
-      const fullUrl = window.location.origin + url;
-      navigator.clipboard.writeText(fullUrl).then(() => {
-        const btn = event.currentTarget;
-        const originalColor = btn.style.color;
-        btn.style.color = '#000000';
-        setTimeout(() => btn.style.color = originalColor, 1000);
-      });
+        const fullUrl = window.location.origin + url;
+        const btn = window.event ? window.event.currentTarget : null;
+
+        navigator.clipboard.writeText(fullUrl).then(() => {
+            if (!btn) return;
+
+            const originalColor = btn.style.color;
+            btn.style.color = '#000000';
+
+            setTimeout(() => {
+                btn.style.color = originalColor;
+            }, 1000);
+        });
     }
+
+    function interpretWeatherCode(code) {
+        if (code === 0) return 'Clear';
+        if (code === 1) return 'Mainly clear';
+        if (code === 2) return 'Partly cloudy';
+        if (code === 3) return 'Overcast';
+        if ([45, 48].includes(code)) return 'Fog';
+        if ([51, 53, 55].includes(code)) return 'Drizzle';
+        if ([56, 57].includes(code)) return 'Freezing drizzle';
+        if ([61, 63, 65].includes(code)) return 'Rain';
+        if ([66, 67].includes(code)) return 'Freezing rain';
+        if ([71, 73, 75].includes(code)) return 'Snow';
+        if (code === 77) return 'Snow grains';
+        if ([80, 81, 82].includes(code)) return 'Rain showers';
+        if ([85, 86].includes(code)) return 'Snow showers';
+        if ([95, 96, 99].includes(code)) return 'Thunderstorm';
+        return 'Unknown';
+    }
+
+    function getWeatherLocation() {
+        const fallback = {
+            lat: 52.06,
+            lon: -1.33,
+            isLocal: false
+        };
+
+        return new Promise((resolve) => {
+            if (!navigator.geolocation) {
+                resolve(fallback);
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    resolve({
+                        lat: position.coords.latitude,
+                        lon: position.coords.longitude,
+                        isLocal: true
+                    });
+                },
+                () => resolve(fallback),
+                {
+                    timeout: 5000,
+                    maximumAge: 600000,
+                    enableHighAccuracy: false
+                }
+            );
+        });
+    }
+
+    async function initialiseWeather() {
+        const widget = document.getElementById('weather-widget');
+
+        if (!widget || widget.dataset.initialised) return;
+        widget.dataset.initialised = 'true';
+
+        const locationLabel = widget.querySelector('#weather-location');
+        const temperature = widget.querySelector('#weather-temp');
+        const conditionLabel = widget.querySelector('#weather-condition');
+
+        const location = await getWeatherLocation();
+
+        locationLabel.textContent = location.isLocal
+            ? 'Local weather'
+            : 'Banbury weather';
+
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 10000);
+
+        try {
+            const params = new URLSearchParams({
+                latitude: location.lat,
+                longitude: location.lon,
+                current: 'temperature_2m,weather_code'
+            });
+
+            const response = await fetch(
+                `https://api.open-meteo.com/v1/forecast?${params}`,
+                { signal: controller.signal }
+            );
+
+            if (!response.ok) {
+                throw new Error(`Weather API returned ${response.status}`);
+            }
+
+            const data = await response.json();
+            const current = data.current;
+
+            if (
+                !current ||
+                typeof current.temperature_2m !== 'number' ||
+                typeof current.weather_code !== 'number'
+            ) {
+                throw new Error('Weather API returned unexpected data');
+            }
+
+            const temp = Math.round(current.temperature_2m);
+            const condition = interpretWeatherCode(current.weather_code);
+
+            temperature.textContent = `${temp}°C`;
+            conditionLabel.textContent = condition;
+
+            widget.classList.remove(
+                'bg-white',
+                'bg-[#fff4e5]',
+                'bg-[#eaf6f4]',
+                'bg-[#eef6ff]'
+            );
+
+            let background = 'bg-white';
+
+            if (temp > 25) {
+                background = 'bg-[#fff4e5]';
+            } else if (/rain|drizzle|showers/i.test(condition)) {
+                background = 'bg-[#eaf6f4]';
+            } else if (temp < 8) {
+                background = 'bg-[#eef6ff]';
+            }
+
+            widget.classList.add(background);
+        } catch (error) {
+            console.error('Weather lookup failed:', error);
+            temperature.textContent = '--';
+            conditionLabel.textContent = 'Weather unavailable';
+        } finally {
+            clearTimeout(timeout);
+        }
+    }
+
+    document.addEventListener('htmx:afterSwap', initialiseWeather);
+
     document.addEventListener('DOMContentLoaded', function () {
-      const weatherModule = document.getElementById('weather-module');
-      if (!weatherModule) return;
+        const weatherModule = document.getElementById('weather-module');
 
-      const fireHTMX = (lat, lon) => {
-        const url = `{% url 'get_weather' %}?lat=${lat}&lon=${lon}`;
-        weatherModule.setAttribute('hx-get', url);
-        htmx.process(weatherModule);
-        htmx.trigger(weatherModule, 'location-ready');
-      };
+        if (weatherModule && !document.getElementById('weather-widget')) {
+            weatherModule.setAttribute('hx-get', "{% url 'get_weather' %}");
+            htmx.process(weatherModule);
+            htmx.trigger(weatherModule, 'location-ready');
+        }
 
-      if ("geolocation" in navigator) {
-        navigator.geolocation.getCurrentPosition(
-          (position) => fireHTMX(position.coords.latitude, position.coords.longitude),
-          () => {
-            console.warn("Geolocation blocked/failed, using defaults.");
-            fireHTMX('52.06', '-1.33'); // Default to Banbury
-          },
-          { timeout: 5000, maximumAge: 60000 }
-        );
-      } else {
-        fireHTMX('52.06', '-1.33');
-      }
+        initialiseWeather();
     });
-  </script>
+</script>
+  
 </body>
 
 </html>

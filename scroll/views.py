@@ -1,5 +1,5 @@
 import logging
-
+import math
 import requests
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
@@ -157,52 +157,8 @@ def labels_list(request):
 import random
 
 @login_required
-def get_weather(request):
-    # 1. Configuration
-    TEST_MODE = False 
-    
-    # 2. Logic (Get lat/lon for the is_local check)
-    lat = request.GET.get('lat')
-    lon = request.GET.get('lon')
-    is_local = lat is not None and lat != 'undefined'
-
-    # 3. The Junction
-    if TEST_MODE:
-        context = {
-            'temp': 30,
-            'condition': 'Sun',
-            'is_local': is_local
-        }
-    else:
-        # Only attempt the "Real" world if we aren't testing
-        try:
-            response = requests.get(
-                "https://api.open-meteo.com/v1/forecast",
-                params={
-                    "latitude": lat or 52.06,
-                    "longitude": lon or -1.33,
-                    "current": "temperature_2m,weather_code",
-                },
-                timeout=10,
-            )
-            response.raise_for_status()
-
-            current = response.json()["current"]
-            context = {
-                "temp": round(current["temperature_2m"]),
-                "condition": _interpret_wmo(current["weather_code"]),
-                "is_local": is_local,
-            }
-        except Exception:
-            logger.exception("Weather lookup failed")
-            context = {
-                "temp": "--",
-                "condition": "Weather unavailable",
-                "is_local": False,
-            }
-
-    # 4. Return the partial
-    return render(request, 'scroll/partials/weather.html', context)
+def get_weather(request): # handle api calls in the browser
+    return render(request, "scroll/partials/weather.html")
 
 def get_quote(request):
     # Using the /random endpoint for more variety on refresh
