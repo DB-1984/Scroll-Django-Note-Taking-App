@@ -1,0 +1,104 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scroll</title>
+  <script>
+    // Apply saved theme (or the OS preference) before first paint
+    (function () {
+      try {
+        var t = localStorage.getItem('scroll-theme');
+        var d = t ? t === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.classList.toggle('dark', d);
+      } catch (e) { }
+    })();
+  </script>
+  <script src="https://unpkg.com/htmx.org@1.9.10"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            paper: 'var(--paper)', ink: 'var(--ink)', muted: 'var(--muted)',
+            field: 'var(--field)', bar: 'var(--bar)', tog: 'var(--tog)', err: 'var(--err)'
+          }
+        }
+      }
+    }
+  </script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root { --paper:#ffffff; --ink:#1b1a17; --muted:#5a564c; --field:#fdfcf9; --bar:#ece9e0; --tog:#e1ddd0; --err:#7a1a14; }
+    .dark { --paper:#1c1b18; --ink:#f2efe6; --muted:#a8a395; --field:#2a2824; --bar:#262420; --tog:#322f2a; --err:#ff8f84; }
+    html { color-scheme: light; }
+    html.dark { color-scheme: dark; }
+    body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -.01em; background: #000; }
+
+    svg.ic { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
+    .i-sun { display: none; }
+    .dark .i-sun { display: block; }
+    .dark .i-moon { display: none; }
+    .lb { font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+
+    /* Form controls (also styles allauth's unclassed form.as_p fields) */
+    input:not([type="checkbox"]):not([type="submit"]):not([type="hidden"]), select, textarea {
+      width: 100%; box-sizing: border-box; background: var(--field); color: var(--ink);
+      border: 1px solid var(--ink); border-radius: 2px; padding: 11px 12px; font-size: 14px; outline: 0;
+    }
+    input::placeholder, textarea::placeholder { color: var(--muted); }
+    input:focus, select:focus, textarea:focus { background: var(--paper); box-shadow: 0 0 0 1px var(--ink); }
+    input[aria-invalid="true"] { border-color: var(--err); }
+    input[type="checkbox"] { accent-color: var(--ink); width: 15px; height: 15px; margin: 0; }
+    button[type="submit"] {
+      width: 100%; background: var(--ink); color: var(--paper); border: 0; border-radius: 2px; padding: 13px;
+      font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer;
+    }
+    button[type="submit"]:hover { opacity: .85; }
+    a { color: var(--ink); }
+  </style>
+</head>
+
+<body class="min-h-screen bg-black text-ink antialiased">
+  <button type="button" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme"
+    class="fixed right-4 top-4 z-30 grid size-[30px] place-items-center rounded-full border border-ink bg-paper text-ink hover:bg-ink hover:text-paper sm:right-10 sm:top-10">
+    <svg class="ic i-moon" width="14" height="14" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+    <svg class="ic i-sun" width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+  </button>
+
+  <div class="min-h-screen">
+    <div class="flex min-h-screen flex-col items-center justify-center overflow-clip bg-paper px-4 py-12">
+
+      <span aria-hidden="true" class="size-[15px] rounded-full border border-ink bg-ink"></span>
+      <span aria-hidden="true" class="h-10 w-px bg-ink"></span>
+
+      <main class="flex w-full max-w-[420px] flex-col gap-[22px] border border-ink p-6 sm:p-9">
+        <div>
+          <div class="flex items-center gap-2.5 text-[22px] font-semibold tracking-[-.03em]">
+            <svg width="20" height="20" viewBox="14 45 341 281" aria-hidden="true" class="fill-ink">
+              <path fill-rule="evenodd" d="M14 157V104A58 58 0 0 1 72 46H235A58 58 0 0 1 293 104V217H138V284A42 42 0 0 1 96 326H84V157ZM44 126V100A23 23 0 0 1 67 77H84V126Z" />
+              <path d="M168 246H355V276A50 50 0 0 1 305 326H155C164 305 168 280 168 246Z" />
+            </svg>
+            Scroll
+          </div>
+          <p class="mt-2 text-sm text-muted">Capture, tag, and search ideas.</p>
+        </div>
+
+        {% block content %}{% endblock %}
+      </main>
+
+    </div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const isDark = document.documentElement.classList.toggle('dark');
+      try { localStorage.setItem('scroll-theme', isDark ? 'dark' : 'light'); } catch (e) { }
+    }
+  </script>
+</body>
+
+</html>

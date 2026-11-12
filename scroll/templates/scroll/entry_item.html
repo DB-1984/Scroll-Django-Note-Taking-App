@@ -1,0 +1,41 @@
+<li id="entry-{{ entry.id }}" class="relative flex gap-5 pb-[22px]">
+  <span aria-hidden="true" class="node mt-[14px] size-[15px] flex-none rounded-full border border-ink bg-paper"></span>
+
+  <article class="min-w-0 flex-1 border border-ink bg-paper px-4 py-3.5">
+    <div class="flex items-baseline justify-between gap-3">
+      <span class="lb">{{ entry.user.username }}</span>
+      <span class="lb text-muted" title="{{ entry.created_at|date:'M j, Y H:i' }}">{{ entry.created_at|date:"M d · H:i" }}</span>
+    </div>
+
+    <p class="mb-3 mt-2 whitespace-pre-wrap break-words text-[15px] leading-normal">{{ entry.body }}</p>
+
+    <div class="flex flex-wrap items-center justify-between gap-3">
+      <div class="min-h-[24px]">
+        {% if entry.label %}
+        <a href="{% url 'index' %}?q={{ entry.label.name }}" class="chip lb">#{{ entry.label.name }}</a>
+        {% endif %}
+      </div>
+
+      <div class="flex flex-wrap items-center gap-2">
+        <form hx-post="{% url 'share_entry' entry.id %}" hx-target="#share-status-{{ entry.id }}" hx-swap="innerHTML"
+          hx-on::after-request="if(event.detail.successful) this.reset()" class="m-0 flex items-center gap-2">
+          {% csrf_token %}
+          <input type="email" name="email" placeholder="Share via email" aria-label="Share via email"
+            class="w-28 border-0 border-b border-ink bg-transparent px-0 py-0.5 text-[12px] text-ink outline-none transition-all placeholder:text-muted focus:w-44">
+          <button type="submit" class="c sm" aria-label="Share" title="Share">
+            <svg class="ic" width="12" height="12" viewBox="0 0 24 24"><path d="m22 2-7 20-4-9-9-4zM22 2 11 13" /></svg>
+          </button>
+        </form>
+        <button hx-get="{% url 'edit_entry' entry.id %}" hx-target="#entry-{{ entry.id }}" hx-swap="outerHTML"
+          class="c sm" aria-label="Edit" title="Edit">
+          <svg class="ic" width="12" height="12" viewBox="0 0 24 24"><path d="M17 3l4 4L7.5 20.5 2 22l1.5-5.5z" /></svg>
+        </button>
+        <button hx-delete="{% url 'delete_entry' entry.id %}" hx-target="#entry-{{ entry.id }}" hx-swap="outerHTML"
+          hx-confirm="Delete this entry?" class="c sm" aria-label="Delete" title="Delete">
+          <svg class="ic" width="12" height="12" viewBox="0 0 24 24"><path d="M3 6h18M19 6v14H5V6M9 6V3h6v3" /></svg>
+        </button>
+      </div>
+    </div>
+    <span id="share-status-{{ entry.id }}" class="lb mt-2 block text-muted empty:hidden"></span>
+  </article>
+</li>

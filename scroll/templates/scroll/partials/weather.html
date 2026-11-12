@@ -1,0 +1,49 @@
+<div class="flex size-[150px] flex-col items-center justify-center rounded-full border border-ink">
+  <span id="wx-temp" class="text-[34px] font-medium tracking-[-.04em]">--</span>
+  <span id="wx-cond" class="lb mt-1 max-w-[110px] text-center text-muted">Loading</span>
+</div>
+<span id="wx-where" class="lb mt-2 text-muted" style="font-size:9px">Banbury</span>
+
+<script>
+  // Runs in the browser (htmx executes this after the swap), so Open-Meteo sees the visitor's IP, not Render's.
+  (function () {
+    var mod = document.getElementById('weather-module');
+    var q = new URLSearchParams(((mod && mod.getAttribute('hx-get')) || '').split('?')[1] || '');
+    var lat = parseFloat(q.get('lat')), lon = parseFloat(q.get('lon'));
+    if (!isFinite(lat) || !isFinite(lon)) { lat = 52.06; lon = -1.33; }
+    var local = q.get('local') === '1';
+
+    var WMO = {
+      0: 'Clear', 1: 'Mainly clear', 2: 'Partly cloudy', 3: 'Overcast',
+      45: 'Foggy', 48: 'Rime fog',
+      51: 'Light drizzle', 53: 'Drizzle', 55: 'Heavy drizzle',
+      61: 'Slight rain', 63: 'Rain', 65: 'Heavy rain',
+      71: 'Slight snow', 73: 'Snow', 75: 'Heavy snow', 77: 'Snow grains',
+      80: 'Slight showers', 81: 'Showers', 82: 'Violent showers',
+      95: 'Thunderstorm', 96: 'Thunderstorm, hail', 99: 'Thunderstorm, heavy hail'
+    };
+
+    function show(temp, code) {
+      document.getElementById('wx-temp').textContent = temp === null ? '--' : Math.round(temp) + '°C';
+      document.getElementById('wx-cond').textContent = temp === null ? 'Unavailable' : (WMO[code] || 'Unknown');
+      document.getElementById('wx-where').textContent = local ? 'Local' : 'Banbury';
+    }
+
+    // Cache for 10 minutes so page changes don't re-hit the API
+    var key = 'scroll-wx', now = Date.now(), cached = null;
+    try { cached = JSON.parse(sessionStorage.getItem(key)); } catch (e) { }
+    if (cached && now - cached.t < 600000 && cached.lat === lat && cached.lon === lon) {
+      show(cached.temp, cached.code);
+      return;
+    }
+
+    fetch('https://api.open-meteo.com/v1/forecast?latitude=' + lat + '&longitude=' + lon + '&current=temperature_2m,weather_code')
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+      .then(function (d) {
+        var t = d.current.temperature_2m, c = d.current.weather_code;
+        try { sessionStorage.setItem(key, JSON.stringify({ t: now, lat: lat, lon: lon, temp: t, code: c })); } catch (e) { }
+        show(t, c);
+      })
+      .catch(function () { show(null); });
+  })();
+</script>
