@@ -27,7 +27,7 @@ Try the app using the shared demo account:
 
 ## Video Demonstration
 
-[![Watch the Scroll demonstration](https://img.youtube.com/vi/86NA-kwgsw0/hqdefault.jpg)](https://www.youtube.com/watch?v=86NA-kwgsw0)
+[![Watch the Scroll demonstration](https://img.youtube.com/vi/e4TpDi4YQJc/hqdefault.jpg)](https://www.youtube.com/watch?v=e4TpDi4YQJc)
 
 *Click the image to watch Scroll in action on YouTube.*
 
@@ -191,6 +191,6 @@ The project demonstrates my ability to work across different backend ecosystems 
 ## Links
 
 - **Live Application:** https://scroll-app.onrender.com/
-- **Video Demonstration:** https://www.youtube.com/watch?v=86NA-kwgsw0
+- **Video Demonstration:** https://www.youtube.com/watch?v=e4TpDi4YQJc
 - **Developer Portfolio:** https://davidbrandondev.com/
 - **GitHub Profile:** https://github.com/DB-1984
