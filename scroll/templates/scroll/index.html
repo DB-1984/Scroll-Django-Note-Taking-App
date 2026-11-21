@@ -4,15 +4,15 @@
 
 {% block content %}
 {% if user.is_authenticated %}
-<section id="composer" class="composer mb-[26px] ml-[35px] border border-ink px-4 py-3.5">
+<section id="composer" class="composer mb-10 rounded-[28px] border border-ink p-6">
   <form hx-post="{% url 'index' %}" hx-target="#timeline" hx-swap="afterbegin" hx-on::after-request="this.reset()">
     {% csrf_token %}
-    <div class="min-h-[56px]">
+    <div class="min-h-[72px]">
       {{ entry_form.body }}
     </div>
-    <div class="mt-2 flex items-center justify-between gap-3">
+    <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
       <div class="min-w-0">{{ entry_form.label_name }}</div>
-      <button type="submit" class="chip lb" style="padding:7px 18px">Post</button>
+      <button type="submit" class="btn">Post</button>
     </div>
   </form>
 </section>
@@ -24,11 +24,14 @@
 {% endblock %}
 
 {% block toolbar %}
-<div class="mb-8 ml-[35px] flex items-center gap-3 rounded-md bg-bar px-[18px] py-3">
-  <svg class="ic shrink-0 text-muted" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
-  <label for="search" class="sr-only">Search entries</label>
-  <input id="search" type="text" name="q" placeholder="Search" autocomplete="off"
-    hx-get="{% url 'index' %}" hx-trigger="keyup changed delay:300ms" hx-target="#timeline"
-    class="min-w-0 flex-1 border-0 border-b border-ink bg-transparent px-0 py-1.5 text-base text-ink outline-none placeholder:text-muted sm:text-[13px]">
+<div class="sticky bottom-0 z-10 flex gap-3 bg-mint px-6 pb-6 pt-3 lg:px-10 lg:pb-9">
+  <label class="flex h-[54px] min-w-0 flex-1 items-center gap-3 rounded-full border border-ink px-6">
+    <svg class="ic shrink-0 text-ink" width="15" height="15" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" /></svg>
+    <span class="sr-only">Search entries</span>
+    <input id="search" type="search" name="q" value="{{ request.GET.q }}" placeholder="Search" autocomplete="off"
+      hx-get="{% url 'index' %}" hx-trigger="input changed delay:300ms" hx-target="#timeline"
+      class="min-w-0 flex-1 bg-transparent text-[15px] text-ink outline-none placeholder:text-muted">
+  </label>
+  <a href="{% url 'index' %}#composer" onclick="document.querySelector('#composer textarea')?.focus()" class="btn flex-none">New entry</a>
 </div>
 {% endblock %}

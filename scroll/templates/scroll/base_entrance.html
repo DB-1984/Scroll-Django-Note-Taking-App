@@ -23,71 +23,73 @@
       theme: {
         extend: {
           colors: {
-            paper: 'var(--paper)', ink: 'var(--ink)', muted: 'var(--muted)',
-            field: 'var(--field)', bar: 'var(--bar)', tog: 'var(--tog)', err: 'var(--err)'
+            mint: 'var(--bg)', void: 'var(--void)', ink: 'var(--ink)', muted: 'var(--muted)', dim: 'var(--dim)',
+            line: 'var(--line)', field: 'var(--field)', btn: 'var(--btn)', 'btn-ink': 'var(--btn-ink)', err: 'var(--err)'
           }
         }
       }
     }
   </script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --paper:#ffffff; --ink:#1b1a17; --muted:#5a564c; --field:#fdfcf9; --bar:#ece9e0; --tog:#e1ddd0; --err:#7a1a14; }
-    .dark { --paper:#1c1b18; --ink:#f2efe6; --muted:#a8a395; --field:#2a2824; --bar:#262420; --tog:#322f2a; --err:#ff8f84; }
+    :root { --bg:#3fd7bc; --void:#02070d; --ink:#04090f; --muted:#15493f; --dim:#1f6a5e; --line:rgba(4,9,15,.28); --field:rgba(255,255,255,.22); --btn:#04090f; --btn-ink:#3fd7bc; --err:#7a0f1a; }
+    .dark { --bg:#07151a; --void:#000; --ink:#e7fff9; --muted:#8fc9bd; --dim:#5fa396; --line:rgba(231,255,249,.22); --field:rgba(231,255,249,.06); --btn:#3fd7bc; --btn-ink:#04090f; --err:#ff9a8a; }
     html { color-scheme: light; }
     html.dark { color-scheme: dark; }
-    body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -.01em; background: #000; }
+    body { font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--void); }
 
     svg.ic { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
     .i-sun { display: none; }
     .dark .i-sun { display: block; }
     .dark .i-moon { display: none; }
-    .lb { font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+    .lb { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+
+    .btn, .btn-o { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 54px; padding: 0 30px; border-radius: 9999px;
+         font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; cursor: pointer; white-space: nowrap; }
+    .btn { background: var(--btn); color: var(--btn-ink); border: 1px solid var(--btn); }
+    .btn:hover { opacity: .85; }
+    .btn-o { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+    .btn-o:hover { background: var(--ink); color: var(--bg); }
 
     /* Form controls (also styles allauth's unclassed form.as_p fields) */
     input:not([type="checkbox"]):not([type="submit"]):not([type="hidden"]), select, textarea {
-      width: 100%; box-sizing: border-box; background: var(--field); color: var(--ink);
-      border: 1px solid var(--ink); border-radius: 2px; padding: 11px 12px; font-size: 14px; outline: 0;
+      width: 100%; box-sizing: border-box; background: transparent; color: var(--ink);
+      border: 1px solid var(--ink); border-radius: 9999px; padding: 15px 24px; font: inherit; font-size: 15px; outline: 0;
     }
+    textarea { border-radius: 24px; }
     input::placeholder, textarea::placeholder { color: var(--muted); }
-    input:focus, select:focus, textarea:focus { background: var(--paper); box-shadow: 0 0 0 1px var(--ink); }
-    input[aria-invalid="true"] { border-color: var(--err); }
-    input[type="checkbox"] { accent-color: var(--ink); width: 15px; height: 15px; margin: 0; }
-    button[type="submit"] {
-      width: 100%; background: var(--ink); color: var(--paper); border: 0; border-radius: 2px; padding: 13px;
-      font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; cursor: pointer;
-    }
-    button[type="submit"]:hover { opacity: .85; }
+    input:focus, select:focus, textarea:focus { background: var(--field); box-shadow: 0 0 0 1px var(--ink); }
+    input[aria-invalid="true"] { border-color: var(--err); box-shadow: 0 0 0 1px var(--err); }
+    input[type="checkbox"] { accent-color: var(--ink); width: 16px; height: 16px; margin: 0; }
     a { color: var(--ink); }
   </style>
 </head>
 
-<body class="min-h-screen bg-black text-ink antialiased">
-  <button type="button" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme"
-    class="fixed right-4 top-4 z-30 grid size-[30px] place-items-center rounded-full border border-ink bg-paper text-ink hover:bg-ink hover:text-paper sm:right-10 sm:top-10">
-    <svg class="ic i-moon" width="14" height="14" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
-    <svg class="ic i-sun" width="14" height="14" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
-  </button>
+<body class="min-h-screen bg-void text-ink antialiased">
+  <div class="min-h-screen lg:p-7">
+    <div class="relative grid min-h-screen overflow-clip bg-mint text-ink lg:min-h-[calc(100vh-3.5rem)] lg:grid-cols-[minmax(300px,34%)_1fr] lg:rounded-[10px] lg:rounded-br-[44px]">
 
-  <div class="min-h-screen">
-    <div class="flex min-h-screen flex-col items-center justify-center overflow-clip bg-paper px-4 py-12">
+      <button type="button" onclick="toggleTheme()" aria-label="Toggle theme" title="Toggle theme"
+        class="absolute right-6 top-6 z-10 grid size-10 place-items-center rounded-full border border-ink bg-transparent text-ink hover:bg-ink hover:text-mint lg:right-10 lg:top-9">
+        <svg class="ic i-moon" width="16" height="16" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+        <svg class="ic i-sun" width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+      </button>
 
-      <span aria-hidden="true" class="size-[15px] rounded-full border border-ink bg-ink"></span>
-      <span aria-hidden="true" class="h-10 w-px bg-ink"></span>
+      <aside class="border-b border-line px-6 pb-10 pt-7 lg:border-b-0 lg:border-r lg:px-10 lg:py-9">
+        <a href="/" class="inline-flex items-center gap-2.5 text-ink no-underline">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 45 341 281" fill="currentColor" class="h-[22px] w-auto" aria-hidden="true">
+            <path fill-rule="evenodd" d="M14 157V104A58 58 0 0 1 72 46H235A58 58 0 0 1 293 104V217H138V284A42 42 0 0 1 96 326H84V157ZM44 126V100A23 23 0 0 1 67 77H84V126Z" />
+            <path d="M168 246H355V276A50 50 0 0 1 305 326H155C164 305 168 280 168 246Z" />
+          </svg>
+          <span class="text-[15px] font-light tracking-[-.01em]">Scroll</span>
+        </a>
+        <p class="mt-10 max-w-[12ch] text-[34px] font-light leading-[1.1] tracking-[-.025em] lg:mt-24">Capture, tag, and search ideas.</p>
+      </aside>
 
-      <main class="flex w-full max-w-[420px] flex-col gap-[22px] border border-ink p-6 sm:p-9">
-        <div>
-          <div class="flex items-center gap-2.5 text-[22px] font-semibold tracking-[-.03em]">
-            <svg width="20" height="20" viewBox="14 45 341 281" aria-hidden="true" class="fill-ink">
-              <path fill-rule="evenodd" d="M14 157V104A58 58 0 0 1 72 46H235A58 58 0 0 1 293 104V217H138V284A42 42 0 0 1 96 326H84V157ZM44 126V100A23 23 0 0 1 67 77H84V126Z" />
-              <path d="M168 246H355V276A50 50 0 0 1 305 326H155C164 305 168 280 168 246Z" />
-            </svg>
-            Scroll
-          </div>
-          <p class="mt-2 text-sm text-muted">Capture, tag, and search ideas.</p>
+      <main class="flex flex-col justify-center px-6 pb-14 pt-10 lg:px-10 lg:py-16">
+        <div class="flex w-full max-w-[420px] flex-col gap-5">
+          {% block content %}{% endblock %}
         </div>
-
-        {% block content %}{% endblock %}
       </main>
 
     </div>

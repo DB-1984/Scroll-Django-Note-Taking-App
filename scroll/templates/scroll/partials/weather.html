@@ -1,8 +1,8 @@
-<div class="flex size-[150px] flex-col items-center justify-center rounded-full border border-ink">
-  <span id="wx-temp" class="text-[34px] font-medium tracking-[-.04em]">--</span>
-  <span id="wx-cond" class="lb mt-1 max-w-[110px] text-center text-muted">Loading</span>
-</div>
-<span id="wx-where" class="lb mt-2 text-muted" style="font-size:9px">Banbury</span>
+<span class="lb text-muted"><span id="wx-where">Banbury</span> weather</span>
+<p class="mt-1 flex items-baseline gap-3">
+  <span id="wx-temp" class="text-[34px] font-light tracking-[-.03em]">--</span>
+  <span id="wx-cond" class="text-[15px] text-muted">Loading</span>
+</p>
 
 <script>
   // Runs in the browser (htmx executes this after the swap), so Open-Meteo sees the visitor's IP, not Render's.

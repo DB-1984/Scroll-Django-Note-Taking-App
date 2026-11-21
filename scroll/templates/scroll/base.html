@@ -23,193 +23,134 @@
       theme: {
         extend: {
           colors: {
-            paper: 'var(--paper)', ink: 'var(--ink)', muted: 'var(--muted)',
-            field: 'var(--field)', bar: 'var(--bar)', tog: 'var(--tog)', err: 'var(--err)'
+            mint: 'var(--bg)', void: 'var(--void)', ink: 'var(--ink)', muted: 'var(--muted)', dim: 'var(--dim)',
+            line: 'var(--line)', field: 'var(--field)', btn: 'var(--btn)', 'btn-ink': 'var(--btn-ink)', err: 'var(--err)'
           }
         }
       }
     }
   </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
-    :root { --paper:#f7f7f7; --ink:#1b1a17; --muted:#5a564c; --field:#fdfcf9; --bar:#ece9e0; --tog:#e1ddd0; --err:#7a1a14; }
-    .dark { --paper:#1c1b18; --ink:#f2efe6; --muted:#a8a395; --field:#2a2824; --bar:#262420; --tog:#322f2a; --err:#ff8f84; }
+    :root { --bg:#3fd7bc; --void:#02070d; --ink:#04090f; --muted:#15493f; --dim:#1f6a5e; --line:rgba(4,9,15,.28); --field:rgba(255,255,255,.22); --btn:#04090f; --btn-ink:#3fd7bc; --err:#7a0f1a; }
+    .dark { --bg:#07151a; --void:#000; --ink:#e7fff9; --muted:#8fc9bd; --dim:#5fa396; --line:rgba(231,255,249,.22); --field:rgba(231,255,249,.06); --btn:#3fd7bc; --btn-ink:#04090f; --err:#ff9a8a; }
     html { color-scheme: light; }
     html.dark { color-scheme: dark; }
-    body { font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; letter-spacing: -.01em; background: #000; }
+    body { font-family: "Hanken Grotesk", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; background: var(--void); }
 
     svg.ic { fill: none; stroke: currentColor; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
     .i-sun { display: none; }
     .dark .i-sun { display: block; }
     .dark .i-moon { display: none; }
 
-    .c { width: 30px; height: 30px; flex: none; display: grid; place-items: center; padding: 0; border-radius: 50%;
+    .lb { font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; }
+    .c { width: 40px; height: 40px; flex: none; display: grid; place-items: center; padding: 0; border-radius: 9999px;
          border: 1px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; text-decoration: none; }
-    .c:hover, .c.is-on { background: var(--ink); color: var(--paper); }
-    .c.sm { width: 26px; height: 26px; }
-    .lb { font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
-    .chip { background: var(--ink); color: var(--paper); border: 0; border-radius: 2px; padding: 5px 9px; cursor: pointer; text-decoration: none; display: inline-block; }
-    .chip:hover { opacity: .85; }
-
-    /* Timeline axis + nodes */
-    #timeline { position: relative; }
-    #timeline::before { content: ""; position: absolute; left: 7px; top: 0; bottom: 0; width: 1px; background: var(--ink); }
-    #timeline > li:first-child .node { background: var(--ink); }
+    .c.sm { width: 36px; height: 36px; }
+    .c.is-on, .c:hover { background: var(--ink); color: var(--bg); }
+    .btn, .btn-o { display: inline-flex; align-items: center; justify-content: center; gap: 10px; height: 54px; padding: 0 30px; border-radius: 9999px;
+         font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; text-decoration: none; cursor: pointer; white-space: nowrap; }
+    .btn { background: var(--btn); color: var(--btn-ink); border: 1px solid var(--btn); }
+    .btn:hover { opacity: .85; }
+    .btn-o { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+    .btn-o:hover { background: var(--ink); color: var(--bg); }
+    .pill { display: inline-flex; align-items: center; padding: 6px 14px; border: 1px solid var(--ink); border-radius: 9999px; color: var(--ink); text-decoration: none; }
+    .pill:hover { background: var(--ink); color: var(--bg); }
 
     /* Composer / edit form fields */
     .composer textarea, .composer input[type="text"] {
       width: 100%; background: transparent; color: var(--ink); border: 0; outline: none; box-shadow: none;
-      padding: 0; resize: none; font-size: 15px; line-height: 1.5;
+      padding: 0; resize: none; font-size: 20px; font-weight: 300; line-height: 1.4; letter-spacing: -.015em;
     }
     .composer textarea::placeholder, .composer input::placeholder { color: var(--muted); }
     .composer select {
-      background: transparent; color: var(--ink); border: 1px solid var(--ink); border-radius: 2px;
-      padding: 5px 10px; font-size: 10px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; outline: none;
+      background: transparent; color: var(--ink); border: 1px solid var(--ink); border-radius: 9999px;
+      padding: 8px 16px; font-size: 11px; font-weight: 500; letter-spacing: .14em; text-transform: uppercase; outline: none; max-width: 100%;
     }
-    .composer select option { text-transform: none; }
+    .composer select option { text-transform: none; letter-spacing: 0; color: #04090f; background: #fff; }
   </style>
 </head>
 
-<body class="min-h-screen bg-black text-ink antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
-  <div class="min-h-screen">
-    <div class="flex min-h-screen flex-col overflow-clip bg-paper text-ink lg:flex-row">
+<body class="min-h-screen bg-void text-ink antialiased" hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+  <div class="min-h-screen lg:p-7">
+    <div class="grid min-h-screen grid-cols-[minmax(0,1fr)] overflow-clip bg-mint text-ink lg:min-h-[calc(100vh-3.5rem)] lg:grid-cols-[minmax(300px,34%)_1fr] lg:grid-rows-[1fr_auto_auto] lg:rounded-[10px] lg:rounded-br-[44px]">
 
-      <!-- Rail (bottom bar on mobile) -->
-      <nav aria-label="Primary"
-        class="sticky bottom-0 z-20 order-last flex items-center justify-around border-t border-ink bg-paper px-4 py-3 lg:static lg:order-first lg:w-[76px] lg:flex-none lg:flex-col lg:justify-between lg:border-r lg:border-t-0 lg:px-0 lg:py-[22px]">
-        <div class="flex gap-3 lg:flex-col lg:gap-[14px]">
-          <a href="{% url 'index' %}" aria-label="Feed" title="Feed"
-            class="c {% if request.resolver_match.url_name == 'index' %}is-on{% endif %}"
-            {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}>
-            <svg class="ic" width="15" height="15" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8M5 10v10h14V10" /></svg>
-          </a>
-          <a href="{% url 'labels' %}" aria-label="Labels" title="Labels"
-            class="c {% if request.resolver_match.url_name == 'labels' %}is-on{% endif %}"
-            {% if request.resolver_match.url_name == 'labels' %}aria-current="page"{% endif %}>
-            <svg class="ic" width="15" height="15" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8zM7.5 7.5h.01" /></svg>
-          </a>
-        </div>
+      <div class="row-start-1 px-6 pb-5 pt-7 lg:col-start-1 lg:border-r lg:border-line lg:px-10 lg:pb-0 lg:pt-9">
+        <a href="{% url 'index' %}" class="inline-flex items-center gap-2.5 text-ink no-underline">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="14 45 341 281" fill="currentColor" class="h-[22px] w-auto" aria-hidden="true">
+            <path fill-rule="evenodd" d="M14 157V104A58 58 0 0 1 72 46H235A58 58 0 0 1 293 104V217H138V284A42 42 0 0 1 96 326H84V157ZM44 126V100A23 23 0 0 1 67 77H84V126Z" />
+            <path d="M168 246H355V276A50 50 0 0 1 305 326H155C164 305 168 280 168 246Z" />
+          </svg>
+          <span class="text-[15px] font-light tracking-[-.01em]">Scroll</span>
+        </a>
 
-        {% if user.is_authenticated %}
-        <div class="flex gap-3 lg:flex-col lg:gap-[14px]">
-          {% if user.socialaccount_set.all.0 %}
-          <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="{{ user.username }}" title="{{ user.username }}"
-            class="size-[30px] rounded-full border border-ink">
-          {% else %}
-          <span class="c lb" title="{{ user.username }}" style="cursor:default">{{ user.username|slice:":1"|upper }}</span>
-          {% endif %}
-          <form action="{% url 'account_logout' %}" method="post" class="m-0">
-            {% csrf_token %}
-            <button type="submit" class="c" aria-label="Log out" title="Log out">
-              <svg class="ic" width="15" height="15" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4M16 17l5-5-5-5M21 12H9" /></svg>
-            </button>
-          </form>
-        </div>
+        <nav aria-label="Primary" class="mt-10 flex flex-wrap gap-x-8 gap-y-3 text-[34px] font-light leading-[1.1] tracking-[-.025em] lg:mt-24 lg:flex-col lg:gap-x-0">
+          <a href="{% url 'index' %}" class="no-underline {% if request.resolver_match.url_name == 'index' %}text-ink{% else %}text-dim hover:text-ink{% endif %}"
+            {% if request.resolver_match.url_name == 'index' %}aria-current="page"{% endif %}>Feed{% if request.resolver_match.url_name == 'index' %}<span class="ml-2 text-xl" aria-hidden="true">›</span>{% endif %}</a>
+          <a href="{% url 'labels' %}" class="no-underline {% if request.resolver_match.url_name == 'labels' %}text-ink{% else %}text-dim hover:text-ink{% endif %}"
+            {% if request.resolver_match.url_name == 'labels' %}aria-current="page"{% endif %}>Labels{% if request.resolver_match.url_name == 'labels' %}<span class="ml-2 text-xl" aria-hidden="true">›</span>{% endif %}</a>
+        </nav>
+      </div>
+
+      {% if user.is_authenticated %}
+      <div class="row-start-2 flex min-w-0 items-center gap-3 px-6 pb-5 text-[13px] lg:col-start-1 lg:row-start-3 lg:border-r lg:border-line lg:px-10 lg:pb-9">
+        {% if user.socialaccount_set.all.0 %}
+        <img src="{{ user.socialaccount_set.all.0.get_avatar_url }}" alt="" class="size-7 rounded-full">
+        {% else %}
+        <span class="grid size-7 place-items-center rounded-full bg-btn text-[11px] font-semibold text-btn-ink" aria-hidden="true">{{ user.username|slice:":1"|upper }}</span>
         {% endif %}
-      </nav>
-
-      <!-- Main column -->
-      <div class="flex min-w-0 flex-1 flex-col">
-      <header class="flex items-start justify-between px-5 pt-5 lg:px-8 lg:pt-[22px]">
-      <div>
-        <div class="flex items-center gap-3.5 text-[19px] font-medium">
-          <span>{% block page_title %}Feed{% endblock %}</span>
-        </div>
-
-        <div class="mt-3.5 flex gap-2.5">
-          <button
-            type="button"
-            onclick="toggleTheme()"
-            class="c"
-            aria-label="Toggle theme"
-            title="Toggle theme"
-          >
-            <svg class="ic i-moon" width="14" height="14" viewBox="0 0 24 24">
-              <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-            </svg>
-            <svg class="ic i-sun" width="14" height="14" viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="4" />
-              <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" />
-            </svg>
+        <span class="text-muted">{{ user.username }}</span>
+        <form action="{% url 'account_logout' %}" method="post" class="m-0 ml-auto">
+          {% csrf_token %}
+          <button type="submit" class="flex items-center gap-1.5 bg-transparent text-ink hover:underline">
+            <svg class="ic" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5v8a3 3 0 0 0 3 3h11M15 12l4 4-4 4" /></svg>Log out
           </button>
-                    <a
-            href="#today-widgets"
-            class="c lg:!hidden"
-            aria-label="Jump to weather and quote"
-            title="Weather and quote"
-          >
-            <svg class="ic" width="14" height="14" viewBox="0 0 24 24">
-              <rect x="3" y="3" width="7" height="7" rx="1" />
-              <rect x="14" y="3" width="7" height="7" rx="1" />
-              <rect x="3" y="14" width="7" height="7" rx="1" />
-              <rect x="14" y="14" width="7" height="7" rx="1" />
-            </svg>
-          </a>
-
-          <a
-            href="{% url 'index' %}"
-            class="c {% if request.GET.q %}is-on{% endif %}"
-            aria-label="Show all notes"
-            title="Show all notes"
-          >
-            <svg class="ic" width="14" height="14" viewBox="0 0 24 24">
-              <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
-            </svg>
-          </a>
+        </form>
+      </div>
+      {% endif %}
+      <!-- Right column: page -->
+      <div class="row-start-3 flex min-w-0 flex-col border-t border-line lg:col-start-2 lg:row-span-3 lg:row-start-1 lg:border-0">
+        <div class="flex items-center justify-between px-6 pt-7 lg:px-10 lg:pt-9">
+          <span class="text-[13px] text-muted">{% block page_title %}Feed{% endblock %}</span>
+          <div class="flex shrink-0 items-center gap-2">
+            <a href="#today-widgets" class="c lg:!hidden" aria-label="Widgets" title="Jump to weather and quote">
+              <svg class="ic" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="7" rx="1" /><rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" /><rect x="14" y="14" width="7" height="7" rx="1" />
+              </svg>
+            </a>
+            <a href="{% url 'index' %}" class="c {% if request.GET.q %}is-on{% endif %}"
+              aria-label="All notes" title="Show all notes">
+              <svg class="ic" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />
+              </svg>
+            </a>
+            <button type="button" onclick="toggleTheme()" class="c" aria-label="Toggle theme" title="Toggle theme">
+              <svg class="ic i-moon" width="16" height="16" viewBox="0 0 24 24"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" /></svg>
+              <svg class="ic i-sun" width="16" height="16" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4" /><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41" /></svg>
+            </button>
+          </div>
         </div>
+
+        <div class="flex-1 px-6 pb-8 pt-8 lg:px-10 lg:pt-14">
+          <main id="entry-stream" class="max-w-[680px]">
+            {% block content %}{% endblock %}
+          </main>
+        </div>
+
+        {% block toolbar %}{% endblock %}
       </div>
 
- <div class="flex shrink-0 items-center gap-0.5 rounded-full border border-zinc-500 px-3 py-1 dark:border-zinc-700 dark:bg-transparent">
-  <svg
-    width="12"
-    height="12"
-    viewBox="14 45 341 281"
-    aria-hidden="true"
-    class="fill-ink"
-  >
-    <path fill-rule="evenodd" d="M14 157V104A58 58 0 0 1 72 46H235A58 58 0 0 1 293 104V217H138V284A42 42 0 0 1 96 326H84V157ZM44 126V100A23 23 0 0 1 67 77H84V126Z" />
-    <path d="M168 246H355V276A50 50 0 0 1 305 326H155C164 305 168 280 168 246Z" />
-  </svg>
-
-  <span class="text-muted tracking-tight font-semibold text-sm">Scroll</span>
-</div>
-</header>
-<div class="flex flex-1 flex-col gap-8 px-5 pb-8 pt-8 lg:flex-row lg:gap-8 lg:px-8 lg:pt-[34px]">
-
-  <main id="entry-stream" class="w-full min-w-0 lg:max-w-[800px] lg:flex-1">
-    {% block toolbar %}{% endblock %}
-    {% block content %}{% endblock %}
-  </main>
-
-  <aside
-    id="today-widgets"
-    aria-label="Today"
-    class="flex w-full max-w-[320px] flex-none flex-col items-center self-center lg:w-[230px] lg:self-start"
-  >
-    <div
-      id="weather-module"
-      hx-trigger="location-ready"
-      class="flex w-full flex-col items-center"
-    >
-      <div class="size-[150px] animate-pulse rounded-full border border-ink"></div>
-    </div>
-
-    <span aria-hidden="true" class="h-11 w-px bg-ink"></span>
-
-    <div
-      id="quote-module"
-      hx-get="{% url 'get_quote' %}"
-      hx-trigger="load"
-      class="box-border w-full border border-ink p-4"
-    >
-      <div class="h-4 w-3/4 animate-pulse bg-tog"></div>
-    </div>
-  </aside>
-
-</div>
-
-      </div>
+      <section id="today-widgets" aria-label="Weather and quote" tabindex="-1"
+        class="row-start-4 flex flex-col gap-7 border-t border-line px-6 py-8 lg:col-start-1 lg:row-start-2 lg:border-r lg:border-t-0 lg:px-10 lg:pb-8">
+        <div id="weather-module" hx-trigger="location-ready">
+          <div class="h-14 w-40 animate-pulse rounded bg-field"></div>
+        </div>
+        <div id="quote-module" hx-get="{% url 'get_quote' %}" hx-trigger="load">
+          <div class="h-10 w-48 animate-pulse rounded bg-field"></div>
+        </div>
+      </section>
     </div>
   </div>
 
