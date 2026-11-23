@@ -27,7 +27,7 @@ Try the app using the shared demo account:
 
 ## Video Demonstration
 
-[![Watch the Scroll demonstration](https://img.youtube.com/vi/86NA-kwgsw0/hqdefault.jpg)](https://www.youtube.com/watch?v=86NA-kwgsw0)
+[![Watch the Scroll demonstration](https://img.youtube.com/vi/tgI5_p30ROQ/hqdefault.jpg)](https://www.youtube.com/watch?v=tgI5_p30ROQ)
 
 *Click the image to watch Scroll in action on YouTube.*
 
